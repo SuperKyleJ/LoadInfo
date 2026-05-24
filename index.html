@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Load Notes</title>
-    <h1>Load Notes</h1>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+    <title>Load Notes</title>
+    <link rel="icon" href="logo.png" sizes="96x96">
+    <style>
+    body {
+      width: 600px;
+      height: 600px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 12px 4px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      height: 46px;
+    }
+        .logo { width: 30px; height: 30px; flex-shrink: 0; }
 
+    </style>
 </head>
 <body>
-<form>
+    <header>    
+        <canvas class="logo" id="logo" width="30" height="30"></canvas>
+        <h1>Load Notes</h1>
+    </header>
+
     <label>Trailer Number:</label>
   <input id="trlNumber" placeholder="Trailer"><br>
         <label>Dock Number:</label>
@@ -15,6 +43,6 @@
   <br>
       <label>Drop/Pickup Number:</label>
  <input id="delNumber" placeholder="Delivery">
-</form>
+
 </body>
 </html>
