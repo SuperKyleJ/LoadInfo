@@ -3,6 +3,30 @@
 <head>
   <title>Trailer Number</title>
   <style>
+    /* Normal phone / desktop layout */
+.full-layout {
+  display: block;
+}
+
+.glasses-layout {
+  display: none;
+}
+
+/* Small display layout */
+@media (max-width: 500px) {
+  .full-layout {
+    display: none;
+  }
+
+  .glasses-layout {
+    display: block;
+  }
+
+  body {
+    font-size: 22px;
+    padding: 12px;
+  }
+}
     body {
       font-family: Arial, sans-serif;
       padding: 30px;
@@ -28,50 +52,77 @@
       margin-top: 12px;
       color: green;
     }
+    .glasses-layout {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.big-value {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 12px 0;
+}
   </style>
 </head>
 <body>
 
-  <h1>Trailer Number</h1>
-  <div>Current Trailer:</div>
-  <div id="currentTrailer">Loading...</div>
-    <input id="trailerInput" placeholder="Enter Trailer Number">
+  <div class="full-layout">
+  <h1>Trailer Info</h1>
 
-<h1>Load Number</h1>
-  <div>Current Load:</div>
+  <p>Current Trailer: <strong id="currentTrailerFull"></strong></p>
+  <p>Current Load: <strong id="currentLoadFull"></strong></p>
+  <p>Dock: <strong id="currentDockFull"></strong></p>
 
-  <div id="currentLoad">Loading...</div>
-  <input id="loadInput" placeholder="Enter Load Number">
+  <input id="dockNumber" placeholder="Dock Number">
+  <input id="trailerInput" placeholder="Trailer Number">
+  <input id="loadNumber" placeholder="Load Number">
 
   <button onclick="saveInfo()">Save</button>
+</div>
 
-  <p id="message"></p>
+<div class="glasses-layout">
+    <button class="big-value" onclick="clearDock()">
+    Dock: <span id="currentDockGlasses"></span>
+</button>
+
+<button class="big-value" onclick="clearTrl()">
+    Trailer: <span id="currentTrailerGlasses"></span>
+</button>
+<button class="big-value" onclick="clearLoad()">
+    Load: <span id="currentLoadGlasses"></span>
+</button>
+  
+</div>
 
   <script>
-    const webAppURL3 = "https://script.google.com/macros/s/AKfycbw1NKrbd3MzL6z4PQI7AK-ZbwSDKCb7HZd07CCGm0-sK6F9yfzhA3Vn4nJ2TSpdBWFN/exec";
+    const webAppURL3 = "https://script.google.com/macros/s/AKfycbwhZh4BwiyQjaun6s8PHAyLxJs06m3J3ZfX_yn6XslWS-MUm4iWnoluENVrt8T42bRE/exec";
 
 
 async function loadAll() {
   const response = await fetch(webAppURL3);
   const data = await response.json();
 
-  document.getElementById("currentTrailer").textContent = data.trailerNumber || "No Trailer";
-document.getElementById("trailerInput").value = data.trailerNumber || "";
+document.getElementById("currentTrailerFull").textContent = data.trailerNumber || "None";
+document.getElementById("currentLoadFull").textContent = data.loadNumber || "None";
 
-  document.getElementById("loadInput").value = data.loadNumber || "";
-    document.getElementById("currentLoad").textContent = data.loadNumber || "No Load";
+document.getElementById("currentTrailerGlasses").textContent = data.trailerNumber || "None";
+document.getElementById("currentLoadGlasses").textContent = data.loadNumber || "None";
+
+document.getElementById("currentDockFull").textContent = data.dockNumber || "None";
+document.getElementById("currentDockGlasses").textContent = data.dockNumber || "None";
 
 }
- async function saveInfo() {
-
+async function saveInfo() {
   const trailerNumber = document.getElementById("trailerInput").value;
   const loadNumber = document.getElementById("loadInput").value;
+  const dockNumber = document.getElementById("dockNumber").value;
 
   const response = await fetch(webAppURL3, {
     method: "POST",
     body: JSON.stringify({
       trailerNumber: trailerNumber,
-      loadNumber: loadNumber
+      loadNumber: loadNumber,
+      dockNumber: dockNumber
     })
   });
 
@@ -81,6 +132,7 @@ document.getElementById("trailerInput").value = data.trailerNumber || "";
 
   document.getElementById("currentTrailer").textContent = result.trailerNumber;
   document.getElementById("currentLoad").textContent = result.loadNumber;
+  document.getElementById("currentDock").textContent = result.dockNumber;
 
   document.getElementById("message").textContent = "Saved";
 
@@ -88,8 +140,75 @@ document.getElementById("trailerInput").value = data.trailerNumber || "";
     document.getElementById("message").textContent = "";
   }, 2000);
 }
-    
-    loadAll();
+async function clearDock() {
+  const trailerNumber = document.getElementById("currentTrailerFull").textContent;
+  const loadNumber = document.getElementById("currentLoadFull").textContent;
+  const dockNumber = "";
+  const response = await fetch(webAppURL3, {
+    method: "POST",
+    body: JSON.stringify({
+      trailerNumber: trailerNumber,
+      loadNumber: loadNumber,
+      dockNumber: dockNumber
+    })
+  });
+  const result = await response.json();
+  console.log(result);
+  await loadAll();
+  document.getElementById("message").textContent = "Saved";
+}  
+async function clearLoad() {
+  const trailerNumber = document.getElementById("currentTrailerFull").textContent;
+  const loadNumber = "";
+  const dockNumber = document.getElementById("currentDockFull").textContent;
+  const response = await fetch(webAppURL3, {
+    method: "POST",
+    body: JSON.stringify({
+      trailerNumber: trailerNumber,
+      loadNumber: loadNumber,
+      dockNumber: dockNumber
+    })
+  });
+  const result = await response.json();
+  console.log(result);
+  await loadAll();
+  document.getElementById("message").textContent = "Saved";
+}  
+async function clearTrl() {
+  const trailerNumber = "";
+  const loadNumber = document.getElementById("currentLoadFull").textContent;
+  const dockNumber = document.getElementById("currentDockFull").textContent;
+  const response = await fetch(webAppURL3, {
+    method: "POST",
+    body: JSON.stringify({
+      trailerNumber: trailerNumber,
+      loadNumber: loadNumber,
+      dockNumber: dockNumber
+    })
+  });
+  const result = await response.json();
+  console.log(result);
+  await loadAll();
+  document.getElementById("message").textContent = "Saved";
+}
+ async function clearAll() {
+  const trailerNumber = "";
+  const loadNumber = "";
+  const dockNumber = "";
+  const response = await fetch(webAppURL3, {
+    method: "POST",
+    body: JSON.stringify({
+      trailerNumber: trailerNumber,
+      loadNumber: loadNumber,
+      dockNumber: dockNumber
+    })
+  });
+  const result = await response.json();
+  console.log(result);
+  await loadAll();
+  document.getElementById("message").textContent = "Saved";
+}
+loadAll();
     
   </script>
 
