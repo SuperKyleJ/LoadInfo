@@ -1,48 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
-    <title>Load Notes</title>
-    <link rel="icon" href="logo.png" sizes="96x96">
-    <style>
+  <title>Trailer Number</title>
+  <style>
     body {
-      width: 600px;
-      height: 600px;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--white);
-      font-family: 'Share Tech Mono', monospace;
-      display: flex;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      max-width: 400px;
+      margin: auto;
     }
-    header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 5px 12px 4px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      height: 46px;
-    }
-        .logo { width: 30px; height: 30px; flex-shrink: 0; }
 
-    </style>
+    input, button {
+      width: 100%;
+      font-size: 20px;
+      padding: 12px;
+      margin-top: 12px;
+      box-sizing: border-box;
+    }
+
+    #currentTrailer {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    #message {
+      margin-top: 12px;
+      color: green;
+    }
+  </style>
 </head>
 <body>
-    <header>    
-        <canvas class="logo" id="logo" width="30" height="30"></canvas>
-        <h1>Load Notes</h1>
-    </header>
 
-    <label>Trailer Number:</label>
-  <input id="trlNumber" placeholder="Trailer"><br>
-        <label>Dock Number:</label>
+  <h1>Trailer Number</h1>
+  <div>Current Trailer:</div>
+  <div id="currentTrailer">Loading...</div>
+    <input id="trailerInput" placeholder="Enter Trailer Number">
 
-  <input id="dockNumber" placeholder="Dock">
-  <br>
-      <label>Drop/Pickup Number:</label>
- <input id="delNumber" placeholder="Delivery">
+<h1>Load Number</h1>
+  <div>Current Load:</div>
+
+  <div id="currentLoad">Loading...</div>
+  <input id="loadInput" placeholder="Enter Load Number">
+
+  <button onclick="saveInfo()">Save</button>
+
+  <p id="message"></p>
+
+  <script>
+    const webAppURL3 = "https://script.google.com/macros/s/AKfycbw1NKrbd3MzL6z4PQI7AK-ZbwSDKCb7HZd07CCGm0-sK6F9yfzhA3Vn4nJ2TSpdBWFN/exec";
+
+
+async function loadAll() {
+  const response = await fetch(webAppURL3);
+  const data = await response.json();
+
+  document.getElementById("currentTrailer").textContent = data.trailerNumber || "No Trailer";
+document.getElementById("trailerInput").value = data.trailerNumber || "";
+
+  document.getElementById("loadInput").value = data.loadNumber || "";
+    document.getElementById("currentLoad").textContent = data.loadNumber || "No Load";
+
+}
+ async function saveInfo() {
+
+  const trailerNumber = document.getElementById("trailerInput").value;
+  const loadNumber = document.getElementById("loadInput").value;
+
+  const response = await fetch(webAppURL3, {
+    method: "POST",
+    body: JSON.stringify({
+      trailerNumber: trailerNumber,
+      loadNumber: loadNumber
+    })
+  });
+
+  const result = await response.json();
+
+  console.log(result);
+
+  document.getElementById("currentTrailer").textContent = result.trailerNumber;
+  document.getElementById("currentLoad").textContent = result.loadNumber;
+
+  document.getElementById("message").textContent = "Saved";
+
+  setTimeout(() => {
+    document.getElementById("message").textContent = "";
+  }, 2000);
+}
+    
+    loadAll();
+    
+  </script>
 
 </body>
 </html>
